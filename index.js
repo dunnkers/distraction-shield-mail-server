@@ -33,10 +33,10 @@ function sendMail(from, to, subject, rawContent) {
 
 app.set('port', (process.env.PORT || 5000));
 
-app.get('/', function(request, response) {
+app.get('/', function(req, res) {
   sendMail(req.query.from, req.query.to, req.query.subject, req.query.content);
 
-  response.send('<p>Success!</p>');
+  res.send('<p>Success!</p>');
 });
 
 app.listen(app.get('port'), function() {
