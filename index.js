@@ -34,7 +34,7 @@ function sendMail(from, rawContent) {
 
 app.set('port', (process.env.PORT || 5000));
 
-app.get('/', function(req, res) {
+app.post('/', function(req, res) {
   sendMail(req.query.from, req.query.content);
 
   res.send('<p>Success!</p>');
