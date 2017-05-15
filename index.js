@@ -35,9 +35,35 @@ function sendMail(from, rawContent) {
 app.set('port', (process.env.PORT || 5000));
 
 app.post('/', function(req, res) {
-  sendMail(req.query.from, req.query.content);
+  // using SendGrid's v3 Node.js Library
+  // https://github.com/sendgrid/sendgrid-nodejs
 
-  res.send('<p>Success!</p>');
+  var helper = require('sendgrid').mail;
+  var fromEmail = new helper.Email(req.query.from);
+  var toEmail = new helper.Email('distractionshield.devteam@gmail.com');
+  var content = new helper.Content('text/plain', req.query.content);
+  var mail = new helper.Mail(fromEmail, 'DS Feedback from ' + fromEmail,
+    toEmail, content);
+
+  var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+  var request = sg.emptyRequest({
+    method: 'POST',
+    path: '/v3/mail/send',
+    body: mail.toJSON()
+  });
+
+  sg.API(request, function (error, response) {
+    console.log(response.statusCode);
+    console.log(response.body);
+    console.log(response.headers);
+
+    if (error) {
+      res.status(500).send('Failure!');
+      console.log('Error response received');
+    } else {
+      res.send('<p>Success!</p>');
+    }
+  });
 });
 
 app.listen(app.get('port'), function() {
