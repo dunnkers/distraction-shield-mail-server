@@ -2,13 +2,13 @@ var express = require('express');
 var app = express();
 
 
-function sendMail(from, to, subject, rawContent) {
+function sendMail(from, subject, rawContent) {
   // using SendGrid's v3 Node.js Library
   // https://github.com/sendgrid/sendgrid-nodejs
 
   var helper = require('sendgrid').mail;
   var fromEmail = new helper.Email(from);
-  var toEmail = new helper.Email(to);
+  var toEmail = new helper.Email('distractionshield.devteam@gmail.com');
   var content = new helper.Content('text/plain', rawContent);
   var mail = new helper.Mail(fromEmail, subject, toEmail, content);
 
@@ -34,7 +34,7 @@ function sendMail(from, to, subject, rawContent) {
 app.set('port', (process.env.PORT || 5000));
 
 app.get('/', function(req, res) {
-  sendMail(req.query.from, req.query.to, req.query.subject, req.query.content);
+  sendMail(req.query.from, req.query.subject, req.query.content);
 
   res.send('<p>Success!</p>');
 });
