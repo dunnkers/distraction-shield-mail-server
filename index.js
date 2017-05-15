@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 
 
-function sendMail(from, subject, rawContent) {
+function sendMail(from, rawContent) {
   // using SendGrid's v3 Node.js Library
   // https://github.com/sendgrid/sendgrid-nodejs
 
@@ -10,7 +10,8 @@ function sendMail(from, subject, rawContent) {
   var fromEmail = new helper.Email(from);
   var toEmail = new helper.Email('distractionshield.devteam@gmail.com');
   var content = new helper.Content('text/plain', rawContent);
-  var mail = new helper.Mail(fromEmail, subject, toEmail, content);
+  var mail = new helper.Mail(fromEmail, 'DS Feedback from ' + fromEmail,
+    toEmail, content);
 
   var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
   var request = sg.emptyRequest({
@@ -34,7 +35,7 @@ function sendMail(from, subject, rawContent) {
 app.set('port', (process.env.PORT || 5000));
 
 app.get('/', function(req, res) {
-  sendMail(req.query.from, req.query.subject, req.query.content);
+  sendMail(req.query.from, req.query.content);
 
   res.send('<p>Success!</p>');
 });
